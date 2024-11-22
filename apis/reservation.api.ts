@@ -54,7 +54,7 @@ export default class ReservationApi {
     id: number
   ): Promise<ToAxiosResult<ReservationResponse[]>> {
     const [error, response] = await to(
-      axiosInstance.patch("/cancel-reservation/" + id)
+      axiosInstance.patch("/reservation/cancel-reservation/" + id)
     );
     return [error as AxiosError | null, response?.data];
   }

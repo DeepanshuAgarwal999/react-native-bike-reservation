@@ -37,7 +37,7 @@ export class ReservationController {
   }
 
   @Patch('/cancel-reservation/:id')
-  cancelReservation(@Req() req: Request, @Param(':id') id: string) {
+  cancelReservation(@Req() req: Request, @Param('id') id: string) {
     return this.reservationService.cancelReservation(+id, req.user.id);
   }
 

@@ -1,13 +1,12 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs, router } from 'expo-router';
+import React, { useEffect } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { useColorScheme } from '@/hooks/useColorScheme';
+// import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthProvider';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const { isManager } = useAuth()
+  // const colorScheme = useColorScheme();
   return (
     <Tabs
 
@@ -41,7 +40,7 @@ export default function TabLayout() {
           ),
         }}
       />
-   
+
     </Tabs>
   );
 }

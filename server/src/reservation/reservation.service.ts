@@ -31,7 +31,6 @@ export class ReservationService {
 
   async create(createReservationDto: CreateReservationDto, userId: number) {
     const { bikeId, startDate, endDate } = createReservationDto;
-    console.log(userId);
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -188,6 +187,9 @@ export class ReservationService {
   }
 
   async cancelReservation(id: number, userId: number) {
+     if (isNaN(id)) {
+       throw new ConflictException('Invalid reservation ID');
+     }
     const reservation = await this.reservationRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -224,7 +226,7 @@ export class ReservationService {
   async rateReservation(
     userId: number,
     rateReservationDto: RateReservationDto,
-  ): Promise<Bike> {
+  ): Promise<Reservation> {
     try {
       const { reservationId, rating } = rateReservationDto;
       console.log(reservationId + ' ' + rating);
@@ -253,23 +255,8 @@ export class ReservationService {
         throw new ForbiddenException('This reservation has already been rated');
       }
 
-      reservation.rating = +rating; // Set the new rating
-      await reservation.save(); // Save the updated reservation
-
-      const bike = reservation.bike;
-      const ratings = await this.reservationRepository.find({
-        where: {
-          bike: { id: +bike.id },
-          rating: Not(IsNull()),
-        },
-      });
-
-      const avgRating =
-        ratings.reduce((sum, res) => sum + (res.rating || 0), 0) /
-          ratings.length || 0;
-      bike.avgRating = avgRating;
-      await this.bikeRepository.save(bike);
-      return bike;
+      reservation.rating = +rating;
+      return await reservation.save();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

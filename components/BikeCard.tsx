@@ -7,7 +7,6 @@ import { useAuth } from '@/context/AuthProvider'
 
 const BikeCard = ({ bike, deleteBike }: { bike: BikeCardType, deleteBike: (id: number) => void }) => {
     const { isManager } = useAuth()
-    console.log(bike.imageURL)
     const handleUpdate = (id: number) => {
         // @ts-ignore
         router.push("/editbike/" + id.toString())

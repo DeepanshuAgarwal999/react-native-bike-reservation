@@ -31,7 +31,6 @@ export default class BikeApi {
 
   static async getBikeById(id: number) {
     const [error, response] = await to(axiosInstance.get(`/bike/${id}`));
-    console.log({resp:response})
     return [error as AxiosError | null, response?.data];
   }
 

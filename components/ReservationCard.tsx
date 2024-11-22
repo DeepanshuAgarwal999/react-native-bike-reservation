@@ -5,9 +5,10 @@ import { formatReadableDate } from '@/lib/utils'
 import { CustomButton } from './CustomButton'
 import RatingComponent from './Rating'
 
-const ReservationCard = ({ reservation, cancelBooking }: { reservation: ReservationResponse, cancelBooking: (id: number) => void }) => {
+const ReservationCard = ({ reservation, cancelBooking, fetchReservations }: { reservation: ReservationResponse, cancelBooking: (id: number) => void, fetchReservations: () => void }) => {
 
     const isBookingActive = new Date(reservation.endDate).getTime() > Date.now();
+    console.log(reservation)
     return (
         <View className='bg-black-200 p-4 rounded-lg flex flex-col'>
             {reservation.bike.imageURL && <Image
@@ -21,7 +22,7 @@ const ReservationCard = ({ reservation, cancelBooking }: { reservation: Reservat
                 <Text className='text-white'>Rating : {reservation.rating}⭐</Text>
                 <Text className='text-white'>status : {!reservation.disabled && isBookingActive ? "active" : "Inactive"}</Text>
                 {
-                    reservation.rating || reservation.disabled ? null : <RatingComponent reservationId={reservation.id} />
+                    reservation.rating || reservation.disabled ? null : <RatingComponent fetchReservations={fetchReservations} reservationId={reservation.id} />
                 }
                 <Text className='text-white'>Reserved By : {reservation.user.name}</Text>
                 {/* {reservation.} */}
@@ -31,7 +32,6 @@ const ReservationCard = ({ reservation, cancelBooking }: { reservation: Reservat
                     {
                         isBookingActive && <CustomButton title='Cancel booking' handlePress={() => cancelBooking(reservation.id)} className='bg-red-500' />
                     }
-                    <CustomButton title='Review' handlePress={() => { }} className='bg-black-100' />
                 </View>
             }
 

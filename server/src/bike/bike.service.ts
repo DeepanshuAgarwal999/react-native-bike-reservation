@@ -19,7 +19,6 @@ export class BikeService {
   async create(createBikeDto: CreateBikeDto) {
     try {
       const bike = this.bikeRepository.create(createBikeDto);
-      console.log(bike);
       return await this.bikeRepository.save(bike);
     } catch (error) {
       console.log(error);

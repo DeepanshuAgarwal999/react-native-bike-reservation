@@ -25,12 +25,16 @@ const BikeForm = ({ mode, id }: { mode: "update" | "create", id?: number }) => {
     const [isAvailable, setIsAvailable] = useState(false);
     const { isManager } = useAuth();
 
-    if (!isManager) {
-        Alert.alert("You don't have access");
-        router.replace('/');
-        return null;
-    }
-
+    useEffect(() => {
+        if (!isManager) {
+            Alert.alert("Access Denied", "You don't have access to this page.", [
+                {
+                    text: "OK",
+                    onPress: () => router.replace("/"),
+                },
+            ]);
+        }
+    }, [isManager]);
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: zodResolver(bikeSchema),
 
@@ -45,7 +49,6 @@ const BikeForm = ({ mode, id }: { mode: "update" | "create", id?: number }) => {
         if (mode === "update" && id) {
             const fetchBikeDetails = async () => {
                 const [error, data] = await BikeApi.getBikeById(id);
-                console.log(data)
                 if (error) {
                     Alert.alert('Error fetching bike details: ' + error);
                     return;
@@ -97,19 +100,19 @@ const BikeForm = ({ mode, id }: { mode: "update" | "create", id?: number }) => {
                         name="model"
                         placeholder="Enter bike model"
                         control={control}
-                        errorMessage={errors.model?.message}
+                        errorMessage={errors.model?.message as string}
                     />
                     <FormField
                         name="color"
                         placeholder="Enter bike color"
                         control={control}
-                        errorMessage={errors.color?.message}
+                        errorMessage={errors.color?.message as string}
                     />
                     <FormField
                         name="location"
                         placeholder="Enter bike location"
                         control={control}
-                        errorMessage={errors.location?.message}
+                        errorMessage={errors.location?.message as string}
                     />
                     <View className="flex-row items-center gap-2">
                         <Text className="text-white">Available</Text>
@@ -121,7 +124,7 @@ const BikeForm = ({ mode, id }: { mode: "update" | "create", id?: number }) => {
                         name="imageURL"
                         placeholder="Enter image URL"
                         control={control}
-                        errorMessage={errors.imageURL?.message}
+                        errorMessage={errors.imageURL?.message as string}
                     />
 
                     <CustomButton title={mode + " bike"} handlePress={handleSubmit(onSubmit)} className="bg-yellow-500" />

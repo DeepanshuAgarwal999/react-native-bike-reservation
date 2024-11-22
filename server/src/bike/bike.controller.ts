@@ -15,12 +15,10 @@ import { UpdateBikeDto } from './dto/update-bike.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 
-@UseGuards(AuthGuard)
 @Controller('bike')
 export class BikeController {
   constructor(private readonly bikeService: BikeService) {}
-
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, AuthGuard)
   @Post()
   create(@Body() createBikeDto: CreateBikeDto) {
     return this.bikeService.create(createBikeDto);
@@ -50,18 +48,18 @@ export class BikeController {
     return this.bikeService.findAll(filters, page, limit);
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.bikeService.findOne(+id);
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBikeDto: UpdateBikeDto) {
     return this.bikeService.update(+id, updateBikeDto);
   }
-
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.bikeService.remove(+id);

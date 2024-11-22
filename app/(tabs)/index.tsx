@@ -1,4 +1,4 @@
-import { View, Text, Alert, FlatList, Modal, StyleSheet, TouchableOpacity, Pressable, TextInput, Switch } from 'react-native';
+import { View, Text, Alert, FlatList, Modal, StyleSheet, TouchableOpacity, Pressable, TextInput, Switch, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import BikeApi from '@/apis/bike.api';
 import { BikeCardType } from '@/index';
@@ -8,6 +8,9 @@ import { useAuth } from '@/context/AuthProvider';
 import { AntDesign } from '@expo/vector-icons';
 import Pagination from '@/components/Pagination';
 import { Link, router } from 'expo-router';
+import dayjs from 'dayjs';
+import { CustomButton } from '@/components/CustomButton';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Bikes = () => {
   const [bikes, setBikes] = useState<BikeCardType[]>([]);
@@ -21,9 +24,12 @@ const Bikes = () => {
     isAvailable: true,
     location: '',
     model: '',
-    startDate: '',
-    endDate: ''
+    startDate: null as Date | null,
+    endDate: null as Date | null
   });
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
   // Fetch Bikes from API
   const buildQueryParams = (filters: any, page: number) => {
     const params: URLSearchParams = new URLSearchParams();
@@ -66,6 +72,7 @@ const Bikes = () => {
   useEffect(() => {
     fetchBikes();
   }, [filters, page]);
+
   function handleLogout() {
     logout()
     router.push('/(auth)/sign-in')
@@ -121,7 +128,7 @@ const Bikes = () => {
               style={styles.filterInput}
               placeholder="Enter color"
               value={filters.color}
-              onChangeText={(text) => setFilters((prev) => ({ ...prev, color: text }))}
+              onChangeText={(text) => setFilters((prev) => ({ ...prev, color: text.trim() }))}
             />
 
             {/* Location Filter */}
@@ -130,7 +137,7 @@ const Bikes = () => {
               style={styles.filterInput}
               placeholder="Enter location"
               value={filters.location}
-              onChangeText={(text) => setFilters((prev) => ({ ...prev, location: text }))}
+              onChangeText={(text) => setFilters((prev) => ({ ...prev, location: text.trim() }))}
             />
 
             {/* Model Filter */}
@@ -139,7 +146,7 @@ const Bikes = () => {
               style={styles.filterInput}
               placeholder="Enter model"
               value={filters.model}
-              onChangeText={(text) => setFilters((prev) => ({ ...prev, model: text }))}
+              onChangeText={(text) => setFilters((prev) => ({ ...prev, model: text.trim() }))}
             />
 
             {/* Availability Filter */}
@@ -153,21 +160,41 @@ const Bikes = () => {
             </View>
 
             {/* Date Filters */}
-            <Text style={styles.filterLabel}>Start Date</Text>
-            <TextInput
-              style={styles.filterInput}
-              placeholder="YYYY-MM-DD"
-              value={filters.startDate}
-              onChangeText={(text) => setFilters((prev) => ({ ...prev, startDate: text }))}
+            <CustomButton
+              title={filters.startDate ? dayjs(filters.startDate).format('YYYY-MM-DD') : 'Start Date'}
+              handlePress={() => setShowStartPicker(true)}
+              className='bg-yellow-500'
+              icon={"calendar"}
             />
+            {showStartPicker && (
+              <DateTimePicker
+                value={filters.startDate || new Date()}
+                mode='date'
+                display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                onChange={(event, date) => {
+                  setShowStartPicker(false);
+                  if (date) setFilters((prev) => ({ ...prev, startDate: date }));
+                }}
+              />
+            )}
 
-            <Text style={styles.filterLabel}>End Date</Text>
-            <TextInput
-              style={styles.filterInput}
-              placeholder="YYYY-MM-DD"
-              value={filters.endDate}
-              onChangeText={(text) => setFilters((prev) => ({ ...prev, endDate: text }))}
+            <CustomButton
+              title={filters.endDate ? dayjs(filters.endDate).format('YYYY-MM-DD') : 'End Date'}
+              handlePress={() => setShowEndPicker(true)}
+              className='bg-yellow-500 mt-4'
+              icon={"calendar"}
             />
+            {showEndPicker && (
+              <DateTimePicker
+                value={filters.endDate || new Date()}
+                mode='date'
+                display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                onChange={(event, date) => {
+                  setShowEndPicker(false);
+                  if (date) setFilters((prev) => ({ ...prev, endDate: date }));
+                }}
+              />
+            )}
 
             {/* Apply Button */}
             <TouchableOpacity
@@ -188,8 +215,8 @@ const Bikes = () => {
                   isAvailable: false,
                   location: '',
                   model: '',
-                  startDate: '',
-                  endDate: ''
+                  startDate: null,
+                  endDate: null
                 })
                 // setModalVisible(false);
               }}

@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
     email: z.string().email("Please enter a valid email").nonempty("Email is required"),
-    password: z.string().min(6, "Password must be at least 6 characters").nonempty("Password is required")
+    password: z.string().min(3, "Password must be at least 6 characters").nonempty("Password is required")
 });
 
 interface UserJwtPayload extends JwtPayload {
@@ -45,9 +45,10 @@ const SignIn = () => {
                 setUser({ token: response.data, id: decodedToken.id, isManager: decodedToken.isManager });
                 await AsyncStorage.setItem('token', response.data);
                 Alert.alert("Success", "User signed in successfully");
-                router.replace("/");
+                router.push("/(tabs)/");
             } else {
-                Alert.alert("Unable to login", error?.message);
+                // @ts-ignore
+                Alert.alert("Unable to login", error?.response?.data.message);
             }
         } catch (error: any) {
             Alert.alert("Error", error.message || error);

@@ -1,6 +1,6 @@
 import { View, Text, Alert, TouchableOpacity, ScrollView, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import BikeApi from '@/apis/bike.api'
 import ReservationApi from '@/apis/reservation.api'
@@ -35,6 +35,9 @@ const Reservation = () => {
   }
 
   useEffect(() => {
+    if (!user) {
+      router.push('/(auth)/sign-in')
+    }
     fetchReservations()
   }, [showAll])
 
@@ -48,19 +51,20 @@ const Reservation = () => {
     Alert.alert("Reservation cancelled successfully")
     fetchReservations()
   }
+
   return (
     <SafeAreaView className='bg-primary h-full'>
       {isManager && <CustomButton title={showAll ? "view less" : 'View all'} handlePress={() => {
         setShowAll(!showAll)
         // fetchReservations()
       }} />}
-      
+
       <Link href={'/sign-in'}>
         sign in</Link>
       <FlatList
         data={reservations}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <ReservationCard reservation={item} cancelBooking={cancelBooking} />}
+        renderItem={({ item }) => <ReservationCard fetchReservations={fetchReservations} reservation={item} cancelBooking={cancelBooking} />}
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, gap: 16 }}
         ListEmptyComponent={<Text className="text-center text-white">No reservation done yet!</Text>}
       />

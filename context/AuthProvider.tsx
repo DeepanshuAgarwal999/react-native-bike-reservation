@@ -34,9 +34,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const decodedToken: UserJwtPayload = jwtDecode(token);
                 setUser({ token, id: decodedToken.id, isManager: decodedToken.isManager });
             }
-            else {
-                router.push('/(auth)/sign-in')
-            }
+            // else {
+            //     router.push('/(auth)/sign-in')
+            // }
         };
 
         fetchUser();

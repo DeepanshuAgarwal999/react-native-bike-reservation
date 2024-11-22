@@ -6,8 +6,9 @@ export const CustomButton = ({
     handlePress,
     isLoading,
     className,
+    icon,
     ...props
-}: { title: string, handlePress: () => void, className?: string, isLoading?: boolean }
+}: { title: string, handlePress: () => void, className?: string, isLoading?: boolean, icon?: any }
 ) => {
     return (
         <TouchableOpacity
@@ -22,12 +23,15 @@ export const CustomButton = ({
         >
             <View className="flex flex-row items-center justify-center gap-4 text-center ">
                 <Text className="text-white text-xl font-semibold capitalize"> {title}</Text>
-                {/* <AntDesign
-                    name="arrowright"
-                    size={20}
-                    color="white"
-                    style={{ transform: [{ translateX: isLoading ? 0 : 2 }] }}
-                /> */}
+                {
+                    icon &&
+                    <AntDesign
+                        name={icon}
+                        size={20}
+                        color="white"
+                        style={{ transform: [{ translateX: isLoading ? 0 : 2 }] }}
+                    />
+                }
             </View>
         </TouchableOpacity>
     );

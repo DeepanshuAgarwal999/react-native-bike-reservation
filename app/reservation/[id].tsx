@@ -23,7 +23,8 @@ const ReservationById = () => {
     console.log(`Reserved from ${dayjs(startDate).format('YYYY-MM-DD')} to ${dayjs(endDate).format('YYYY-MM-DD')}`);
     const [error, data] = await ReservationApi.createReservation({ endDate: endDate, startDate: startDate, bikeId: +id })
     if (error) {
-      Alert.alert("unable to reserve, " + error.message)
+      // @ts-ignore
+      Alert.alert("unable to reserve, " + error.response?.data.message)
       return
     }
     Alert.alert("Booked successfully")
